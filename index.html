@@ -198,6 +198,40 @@
   .fade-up { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .fade-up.on { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { .fade-up, .carousel-track { animation: none; transition: none; opacity: 1; transform: none; } }
+
+  /* LEAD FORM MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--bg-panel); border: 1px solid var(--hairline); border-radius: 18px;
+    max-width: 440px; width: 100%; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-box h3 { font-size: 20px; margin-bottom: 6px; }
+  .modal-box .modal-note { color: var(--gray); font-size: 13.5px; margin-bottom: 20px; }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid var(--hairline); background: none; color: var(--gray); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .modal-close:hover { border-color: var(--accent); color: var(--white); }
+  .modal-box label { display: block; font-size: 12.5px; color: var(--gray); margin: 14px 0 6px; font-weight: 600; }
+  .modal-box label:first-of-type { margin-top: 0; }
+  .modal-box select, .modal-box input {
+    width: 100%; background: #000; border: 1px solid var(--hairline); border-radius: 8px;
+    padding: 12px 14px; color: var(--white); font-family: inherit; font-size: 14px; outline: none;
+  }
+  .modal-box select:focus, .modal-box input:focus { border-color: var(--accent); }
+  .modal-submit {
+    margin-top: 20px; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 18px; border-radius: 10px; background: #25D366; color: #06110C; font-weight: 700; font-size: 15px;
+    border: none; cursor: pointer; transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .modal-submit:hover { transform: translateY(-2px); opacity: 0.92; }
+  .modal-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .modal-hint { color: var(--gray-dim); font-size: 12px; margin-top: 10px; text-align: center; }
 </style>
 
 <script>
@@ -222,7 +256,7 @@
       <img src="https://i.postimg.cc/3rVMTKYG/adhabits-logo.png" alt="AdHabits" />
       AdHabits
     </a>
-    <a href="#schedule" target="_self" class="btn-outline">See If You Qualify</a>
+    <a href="javascript:void(0)" target="_self" class="btn-outline" data-open-modal="true">See If You Qualify</a>
   </div>
 </header>
 
@@ -241,7 +275,7 @@
         <wistia-player media-id="z0lafffag8" aspect="1.4328358208955223"></wistia-player>
       </div>
     </div>
-    <a href="#schedule" target="_self" class="btn fade-up on">
+    <a href="javascript:void(0)" target="_self" class="btn fade-up on" data-open-modal="true">
       See If You Qualify
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
@@ -288,25 +322,7 @@
     </div>
 
     <div class="fade-up on" style="text-align:center; margin-top:44px;">
-      <a href="#schedule" target="_self" class="btn">See If You Qualify</a>
-    </div>
-  </div>
-</section>
-
-<hr class="rule" />
-
-<!-- CAL.COM #1 -->
-<section class="section" id="schedule">
-  <div class="wrap">
-    <div class="booking-wrap fade-up on">
-      <div class="booking-top">
-        <div>
-          <h2 class="h3">Free Growth Audit Call</h2>
-          <p>45 minutes. We audit your current setup, find the gaps, and map your exact path to ₹2L+/month.</p>
-        </div>
-        <div class="scarcity"><span class="dot"></span>Only 5 spots this month</div>
-      </div>
-      <iframe class="cal-iframe" src="https://cal.com/ad-habits-pxhadl/adhabits?theme=dark" title="Book a Strategy Call with AdHabits" loading="lazy"></iframe>
+      <a href="javascript:void(0)" target="_self" class="btn" data-open-modal="true">See If You Qualify</a>
     </div>
   </div>
 </section>
@@ -439,7 +455,7 @@
       </div>
     </div>
     <div class="fade-up on" style="text-align:center; margin-top:40px;">
-      <a href="#schedule" target="_self" class="btn">See If You Qualify</a>
+      <a href="javascript:void(0)" target="_self" class="btn" data-open-modal="true">See If You Qualify</a>
     </div>
   </div>
 </section>
@@ -480,25 +496,23 @@
 
 <hr class="rule" />
 
-<!-- CAL.COM #2 + CONTACT -->
-<section class="section" id="schedule-2">
+<!-- FINAL CTA -->
+<section class="section" id="getstart">
   <div class="wrap">
     <div class="fade-up on" style="text-align:center; max-width:600px; margin:0 auto 40px;">
       <span class="eyebrow">Get In Touch</span>
-      <h2 class="h2">Can't Find A Time That Works?</h2>
-      <p style="color:var(--gray); margin-top:12px; font-size:15px;">Drop your details below and we'll find a slot that fits — or book directly above.</p>
+      <h2 class="h2">Ready To Get Daily Qualified Leads?</h2>
+      <p style="color:var(--gray); margin-top:12px; font-size:15px;">Drop your details and we'll message you on WhatsApp with next steps.</p>
     </div>
+    <div class="fade-up on" style="text-align:center;">
+      <a href="javascript:void(0)" target="_self" class="btn" data-open-modal="true">
+        Send My Details On WhatsApp
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
 
-    <div class="booking-wrap fade-up on" style="margin-bottom:24px;">
-      <div class="booking-top">
-        <div>
-          <h2 class="h3">Book Your Free Growth Audit</h2>
-          <p>Pick a slot. Rahman reviews your setup before the call and comes prepared.</p>
-        </div>
-        <div class="scarcity"><span class="dot"></span>Only 5 spots this month</div>
-      </div>
-      <iframe class="cal-iframe" src="https://cal.com/ad-habits-pxhadl/adhabits?theme=dark" title="Book a Growth Audit Call with AdHabits" loading="lazy"></iframe>
-    </div>
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
@@ -521,6 +535,45 @@
   </div>
 </footer>
 
+<!-- LEAD FORM MODAL -->
+<div class="modal-overlay" id="lead-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-close="lead-modal">✕</button>
+    <h3>Get Started with AdHabits</h3>
+    <p class="modal-note">Hello Rahman sir, I am interested in your ad service. This is my detail 👇</p>
+
+    <form id="leadForm" novalidate>
+      <label for="platform">Platform *</label>
+      <select id="platform" required>
+        <option value="">Select Platform</option>
+        <option value="IDP">IDP</option>
+        <option value="Bizgurukul">Bizgurukul</option>
+        <option value="LeadsArk">LeadsArk</option>
+        <option value="CareerFIXX">CareerFIXX</option>
+        <option value="LeadsGuru">LeadsGuru</option>
+        <option value="MillionaireTrack">MillionaireTrack</option>
+        <option value="Gyankmao">Gyankmao</option>
+        <option value="knowledgewaveindia">knowledgewaveindia</option>
+        <option value="Starteazy">Starteazy</option>
+        <option value="RichIND">RichIND</option>
+        <option value="Forever">Forever</option>
+        <option value="Vastige">Vastige</option>
+      </select>
+
+      <label for="name">Your Name *</label>
+      <input id="name" type="text" placeholder="Your name" required autocomplete="name" />
+
+      <label for="phone">Phone Number *</label>
+      <input id="phone" type="tel" placeholder="10-digit number" required autocomplete="tel" pattern="[0-9]{10}" />
+
+      <button type="submit" id="sendBtn" class="modal-submit" aria-label="Send details on WhatsApp">
+        <span>Send on WhatsApp</span>
+      </button>
+      <p class="modal-hint">Auto-opens WhatsApp after saving.</p>
+    </form>
+  </div>
+</div>
+
 <script>
   const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('on'); fadeObserver.unobserve(entry.target); } });
@@ -542,6 +595,72 @@
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  // ===== LEAD FORM MODAL OPEN/CLOSE =====
+  const leadModal = document.getElementById('lead-modal');
+  document.querySelectorAll('[data-open-modal]').forEach(btn => {
+    btn.addEventListener('click', () => leadModal.classList.add('open'));
+  });
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById(btn.getAttribute('data-close')).classList.remove('open');
+    });
+  });
+  leadModal.addEventListener('click', (e) => { if (e.target === leadModal) leadModal.classList.remove('open'); });
+
+  // ===== FORM HANDLING (same Google Sheet + WhatsApp logic) =====
+  const leadForm = document.getElementById('leadForm');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (leadForm && sendBtn) {
+    leadForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const platform = document.getElementById('platform').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      if (!platform || !name || !phone) {
+        alert('⚠️ Please fill all required fields.');
+        return;
+      }
+      if (!/^[0-9]{10}$/.test(phone)) {
+        alert('⚠️ Enter valid 10-digit phone number.');
+        return;
+      }
+
+      const originalBtnText = sendBtn.textContent;
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Processing...';
+
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznR1Wk3Gn2jztC1ZXnBW4jr52146ctHC3phfdn8Ve3zuwKvCflNIOy_sxfPZNhQbbf/exec";
+      const payload = new URLSearchParams({ name, phone, platform, plan: 'AdHabits Landing Page', timestamp: new Date().toISOString() });
+
+      try {
+        if (navigator.sendBeacon) {
+          const blob = new Blob([payload.toString()], { type: 'application/x-www-form-urlencoded' });
+          navigator.sendBeacon(SCRIPT_URL, blob);
+        } else {
+          fetch(SCRIPT_URL, { method: 'POST', body: payload, mode: 'no-cors', keepalive: true }).catch(() => {});
+        }
+      } catch (_) {}
+
+      if (typeof fbq === 'function') {
+        fbq('trackSingle', '1609093500184090', 'Contact', { content_category: platform });
+      }
+
+      const WHATSAPP_TO = "919610580359";
+      const msg = `Hello Rahman sir,\n\nI am interested in your ad service. My details:\n\n📋 *Platform:* ${platform}\n👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n\nPlease share me details and next steps.`;
+      window.open(`https://wa.me/${WHATSAPP_TO}?text=${encodeURIComponent(msg)}`, '_blank');
+
+      setTimeout(() => {
+        sendBtn.disabled = false;
+        sendBtn.textContent = originalBtnText;
+        leadForm.reset();
+        leadModal.classList.remove('open');
+      }, 1200);
+    });
+  }
 </script>
 
 </body>
