@@ -611,10 +611,23 @@
   // ===== FORM HANDLING (same Google Sheet + WhatsApp logic) =====
   const leadForm = document.getElementById('leadForm');
   const sendBtn = document.getElementById('sendBtn');
+  // sessionStorage guard: survives modal close/reopen, so the pixel event
+  // can only ever fire ONCE per visitor session — never on a second click,
+  // never on a second form open, never on a second submit.
+  function leadEventAlreadyFired() {
+    try { return sessionStorage.getItem('adh_lead_event_fired') === '1'; }
+    catch (_) { return false; }
+  }
+  function markLeadEventFired() {
+    try { sessionStorage.setItem('adh_lead_event_fired', '1'); } catch (_) {}
+  }
 
   if (leadForm && sendBtn) {
     leadForm.addEventListener('submit', async function (e) {
       e.preventDefault();
+
+      // Block double-clicks on the same submission (button already processing).
+      if (sendBtn.disabled) return;
 
       const platform = document.getElementById('platform').value.trim();
       const name = document.getElementById('name').value.trim();
@@ -645,8 +658,12 @@
         }
       } catch (_) {}
 
-      if (typeof fbq === 'function') {
-        fbq('trackSingle', '1609093500184090', 'Contact', { content_category: platform });
+      // Fire Contact + Lead exactly once per visitor, right when they're sent to WhatsApp.
+      if (!leadEventAlreadyFired() && typeof fbq === 'function') {
+        markLeadEventFired();
+        const eventId = 'lead_' + Date.now();
+        fbq('trackSingle', '1609093500184090', 'Contact', { content_category: platform }, { eventID: eventId });
+        fbq('trackSingle', '1609093500184090', 'Lead', { content_category: platform }, { eventID: eventId + '_lead' });
       }
 
       const WHATSAPP_TO = "919610580359";
