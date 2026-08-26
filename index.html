@@ -125,15 +125,10 @@
   /* FULLSCREEN VIDEO POPUP */
   .video-modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.96);
+    align-items: center; justify-content: center;
   }
-  .video-modal-overlay.open { display: block; }
+  .video-modal-overlay.open { display: flex; }
   .video-modal-inner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(94vw, calc(94vh * 16 / 9));
-    height: min(94vh, calc(94vw * 9 / 16));
     background: #000; border-radius: 8px; overflow: hidden;
   }
   .video-modal-inner iframe { width: 100%; height: 100%; border: none; display: block; }
@@ -677,8 +672,35 @@
   function openVideoPopup() {
     ensureHeroIframe();
     videoModalInner.appendChild(heroIframe); // moves the SAME iframe node — playback is not interrupted
+    sizeVideoModal();
     videoModal.classList.add('open');
   }
+
+  // Computes the largest 16:9 box (in exact pixels) that fits inside the
+  // real, current viewport. Uses visualViewport when available since it's
+  // the most accurate source of true visible size on mobile browsers.
+  function sizeVideoModal() {
+    const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+    const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    const margin = vw < 640 ? 16 : 32;
+    const maxW = vw - margin * 2;
+    const maxH = vh - margin * 2;
+    let w = maxW;
+    let h = (w * 9) / 16;
+    if (h > maxH) {
+      h = maxH;
+      w = (h * 16) / 9;
+    }
+    videoModalInner.style.width = Math.round(w) + 'px';
+    videoModalInner.style.height = Math.round(h) + 'px';
+  }
+
+  window.addEventListener('resize', function () {
+    if (videoModal.classList.contains('open')) sizeVideoModal();
+  });
+  window.addEventListener('orientationchange', function () {
+    if (videoModal.classList.contains('open')) setTimeout(sizeVideoModal, 250);
+  });
 
   function closeVideoPopup() {
     if (heroIframe) {
