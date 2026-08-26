@@ -125,18 +125,21 @@
   /* FULLSCREEN VIDEO POPUP */
   .video-modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.96);
-    align-items: center; justify-content: center; padding: 60px 20px 20px;
+    align-items: center; justify-content: center; padding: 16px;
   }
   .video-modal-overlay.open { display: flex; }
-  .video-modal-inner { width: 100%; max-width: 1100px; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; }
+  .video-modal-inner { background: #000; border-radius: 8px; overflow: hidden; }
   .video-modal-inner iframe { width: 100%; height: 100%; border: none; display: block; }
   .video-modal-close {
-    position: fixed; top: 18px; right: 18px; z-index: 301;
-    width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08);
-    border: 1px solid var(--hairline); color: #fff; font-size: 18px; cursor: pointer;
+    position: fixed; top: 14px; right: 14px; z-index: 301;
+    width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 18px; cursor: pointer;
     display: flex; align-items: center; justify-content: center; transition: background 0.2s ease;
   }
-  .video-modal-close:hover { background: rgba(255,255,255,0.18); border-color: var(--accent); }
+  .video-modal-close:hover { background: rgba(0,0,0,0.9); border-color: var(--accent); }
+  @media (max-width: 640px) {
+    .video-modal-close { top: 10px; right: 10px; width: 36px; height: 36px; }
+  }
 
   /* VIDEO GRID (kept as-is, moved under hero) */
   .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -667,8 +670,33 @@
   function openVideoPopup() {
     ensureHeroIframe();
     videoModalInner.appendChild(heroIframe); // moves the SAME iframe node — playback is not interrupted
+    sizeVideoModal();
     videoModal.classList.add('open');
   }
+
+  // Calculates the largest 16:9 box that fits fully inside the current
+  // viewport (with a small margin), so the video never overflows on
+  // any screen size — mobile, tablet, or desktop.
+  function sizeVideoModal() {
+    const margin = window.innerWidth < 640 ? 16 : 32;
+    const maxW = window.innerWidth - margin * 2;
+    const maxH = window.innerHeight - margin * 2;
+    let w = maxW;
+    let h = (w * 9) / 16;
+    if (h > maxH) {
+      h = maxH;
+      w = (h * 16) / 9;
+    }
+    videoModalInner.style.width = w + 'px';
+    videoModalInner.style.height = h + 'px';
+  }
+
+  window.addEventListener('resize', function () {
+    if (videoModal.classList.contains('open')) sizeVideoModal();
+  });
+  window.addEventListener('orientationchange', function () {
+    if (videoModal.classList.contains('open')) setTimeout(sizeVideoModal, 200);
+  });
 
   function closeVideoPopup() {
     if (heroIframe) {
