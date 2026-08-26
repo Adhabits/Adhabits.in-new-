@@ -113,35 +113,6 @@
   }
   .hero-yt-wrap.playing::before { display: none; }
   .hero-yt-wrap.playing .hero-yt-play { display: none; }
-  .hero-yt-expand {
-    position: absolute; top: 10px; right: 10px; z-index: 5;
-    width: 34px; height: 34px; border-radius: 8px; background: rgba(0,0,0,0.55);
-    border: 1px solid rgba(255,255,255,0.25); color: #fff; display: none;
-    align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s ease;
-  }
-  .hero-yt-expand:hover { background: rgba(0,0,0,0.8); }
-  .hero-yt-wrap.playing .hero-yt-expand { display: flex; }
-
-  /* FULLSCREEN VIDEO POPUP */
-  .video-modal-overlay {
-    display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.96);
-    align-items: center; justify-content: center;
-  }
-  .video-modal-overlay.open { display: flex; }
-  .video-modal-inner {
-    background: #000; border-radius: 8px; overflow: hidden;
-  }
-  .video-modal-inner iframe { width: 100%; height: 100%; border: none; display: block; }
-  .video-modal-close {
-    position: fixed; top: 14px; right: 14px; z-index: 301;
-    width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.7);
-    border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: background 0.2s ease;
-  }
-  .video-modal-close:hover { background: rgba(0,0,0,0.9); border-color: var(--accent); }
-  @media (max-width: 640px) {
-    .video-modal-close { top: 10px; right: 10px; width: 36px; height: 36px; }
-  }
 
   /* VIDEO GRID (kept as-is, moved under hero) */
   .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -315,9 +286,6 @@
         <div class="hero-yt-play" aria-hidden="true">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
         </div>
-        <button type="button" class="hero-yt-expand" id="hero-yt-expand-btn" aria-label="Watch fullscreen">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-        </button>
       </div>
     </div>
     <a href="javascript:void(0)" target="_self" class="btn fade-up on" data-open-modal="true">
@@ -619,12 +587,6 @@
   </div>
 </div>
 
-<!-- FULLSCREEN VIDEO POPUP -->
-<div class="video-modal-overlay" id="video-modal">
-  <button class="video-modal-close" id="video-modal-close" aria-label="Close video">✕</button>
-  <div class="video-modal-inner" id="video-modal-inner"></div>
-</div>
-
 <script>
   const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('on'); fadeObserver.unobserve(entry.target); } });
@@ -647,86 +609,22 @@
     });
   });
 
-  // ===== HERO VIDEO — CLICK TO PLAY, OPENS FULLSCREEN POPUP, ==========
-  // ===== CLOSING RETURNS IT INLINE AND KEEPS IT PLAYING ================
+  // ===== HERO VIDEO — SIMPLE CLICK TO PLAY WITH SOUND =====
   const heroVideoWrap = document.getElementById('hero-yt-player');
-  const heroExpandBtn = document.getElementById('hero-yt-expand-btn');
-  const videoModal = document.getElementById('video-modal');
-  const videoModalInner = document.getElementById('video-modal-inner');
-  const videoModalClose = document.getElementById('video-modal-close');
-  let heroIframe = null;
-
-  function ensureHeroIframe() {
-    if (heroIframe) return heroIframe;
-    const videoId = heroVideoWrap.getAttribute('data-video-id');
-    heroIframe = document.createElement('iframe');
-    heroIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
-    heroIframe.title = 'AdHabits Strategy Video';
-    heroIframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    heroIframe.allowFullscreen = true;
-    heroVideoWrap.classList.add('playing');
-    heroVideoWrap.style.backgroundImage = 'none';
-    return heroIframe;
-  }
-
-  function openVideoPopup() {
-    ensureHeroIframe();
-    videoModalInner.appendChild(heroIframe); // moves the SAME iframe node — playback is not interrupted
-    sizeVideoModal();
-    videoModal.classList.add('open');
-  }
-
-  // Computes the largest 16:9 box (in exact pixels) that fits inside the
-  // real, current viewport. Uses visualViewport when available since it's
-  // the most accurate source of true visible size on mobile browsers.
-  function sizeVideoModal() {
-    const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
-    const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-    const margin = vw < 640 ? 16 : 32;
-    const maxW = vw - margin * 2;
-    const maxH = vh - margin * 2;
-    let w = maxW;
-    let h = (w * 9) / 16;
-    if (h > maxH) {
-      h = maxH;
-      w = (h * 16) / 9;
-    }
-    videoModalInner.style.width = Math.round(w) + 'px';
-    videoModalInner.style.height = Math.round(h) + 'px';
-  }
-
-  window.addEventListener('resize', function () {
-    if (videoModal.classList.contains('open')) sizeVideoModal();
-  });
-  window.addEventListener('orientationchange', function () {
-    if (videoModal.classList.contains('open')) setTimeout(sizeVideoModal, 250);
-  });
-
-  function closeVideoPopup() {
-    if (heroIframe) {
-      heroVideoWrap.innerHTML = ''; // clear thumbnail/play icon leftovers
-      heroVideoWrap.appendChild(heroIframe); // move it back inline — keeps playing
-      heroVideoWrap.appendChild(heroExpandBtn); // keep the reopen button on top of it
-      heroVideoWrap.classList.add('playing');
-    }
-    videoModal.classList.remove('open');
-  }
-
   if (heroVideoWrap) {
-    heroVideoWrap.addEventListener('click', openVideoPopup);
+    heroVideoWrap.addEventListener('click', function () {
+      const videoId = this.getAttribute('data-video-id');
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+      iframe.title = 'AdHabits Strategy Video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      this.classList.add('playing');
+      this.style.backgroundImage = 'none';
+      this.innerHTML = '';
+      this.appendChild(iframe);
+    }, { once: true });
   }
-  if (heroExpandBtn) {
-    heroExpandBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      openVideoPopup();
-    });
-  }
-  if (videoModalClose) {
-    videoModalClose.addEventListener('click', closeVideoPopup);
-  }
-  videoModal.addEventListener('click', function (e) {
-    if (e.target === videoModal) closeVideoPopup();
-  });
 
   // ===== LEAD FORM MODAL OPEN/CLOSE =====
   const leadModal = document.getElementById('lead-modal');
