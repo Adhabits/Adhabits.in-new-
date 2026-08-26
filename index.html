@@ -128,7 +128,11 @@
     align-items: center; justify-content: center; padding: 16px;
   }
   .video-modal-overlay.open { display: flex; }
-  .video-modal-inner { background: #000; border-radius: 8px; overflow: hidden; }
+  .video-modal-inner {
+    width: min(94vw, calc(94vh * 16 / 9));
+    height: min(94vh, calc(94vw * 9 / 16));
+    background: #000; border-radius: 8px; overflow: hidden;
+  }
   .video-modal-inner iframe { width: 100%; height: 100%; border: none; display: block; }
   .video-modal-close {
     position: fixed; top: 14px; right: 14px; z-index: 301;
@@ -670,33 +674,8 @@
   function openVideoPopup() {
     ensureHeroIframe();
     videoModalInner.appendChild(heroIframe); // moves the SAME iframe node — playback is not interrupted
-    sizeVideoModal();
     videoModal.classList.add('open');
   }
-
-  // Calculates the largest 16:9 box that fits fully inside the current
-  // viewport (with a small margin), so the video never overflows on
-  // any screen size — mobile, tablet, or desktop.
-  function sizeVideoModal() {
-    const margin = window.innerWidth < 640 ? 16 : 32;
-    const maxW = window.innerWidth - margin * 2;
-    const maxH = window.innerHeight - margin * 2;
-    let w = maxW;
-    let h = (w * 9) / 16;
-    if (h > maxH) {
-      h = maxH;
-      w = (h * 16) / 9;
-    }
-    videoModalInner.style.width = w + 'px';
-    videoModalInner.style.height = h + 'px';
-  }
-
-  window.addEventListener('resize', function () {
-    if (videoModal.classList.contains('open')) sizeVideoModal();
-  });
-  window.addEventListener('orientationchange', function () {
-    if (videoModal.classList.contains('open')) setTimeout(sizeVideoModal, 200);
-  });
 
   function closeVideoPopup() {
     if (heroIframe) {
