@@ -125,10 +125,13 @@
   /* FULLSCREEN VIDEO POPUP */
   .video-modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.96);
-    align-items: center; justify-content: center; padding: 16px;
   }
-  .video-modal-overlay.open { display: flex; }
+  .video-modal-overlay.open { display: block; }
   .video-modal-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: min(94vw, calc(94vh * 16 / 9));
     height: min(94vh, calc(94vw * 9 / 16));
     background: #000; border-radius: 8px; overflow: hidden;
