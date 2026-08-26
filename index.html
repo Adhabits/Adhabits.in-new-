@@ -17,10 +17,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-<script src="https://fast.wistia.com/player.js" async></script>
-<script src="https://fast.wistia.com/embed/z0lafffag8.js" async type="module"></script>
-<style>wistia-player[media-id='z0lafffag8']:not(:defined) { background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/z0lafffag8/swatch'); display: block; filter: blur(5px); padding-top:69.79%; }</style>
-
 <style>
   :root {
     --bg: #000000;
@@ -102,6 +98,21 @@
   .hero-content { position: relative; max-width: 780px; margin: 0 auto; }
   .hero-sub { color: var(--gray); font-size: 17px; max-width: 560px; margin: 22px auto 34px; }
   .hero-proof-line { color: var(--gray-dim); font-size: 13px; margin-top: 20px; letter-spacing: 0.02em; }
+
+  /* HERO CLICK-TO-PLAY YOUTUBE VIDEO */
+  .hero-yt-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+  .hero-yt-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 68px; height: 68px; border-radius: 50%; background: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5); transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .hero-yt-wrap:hover .hero-yt-play { transform: translate(-50%, -50%) scale(1.08); }
+  .hero-yt-wrap::before {
+    content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.25); transition: opacity 0.2s ease;
+  }
+  .hero-yt-wrap.playing::before { display: none; }
+  .hero-yt-wrap.playing .hero-yt-play { display: none; }
 
   /* VIDEO GRID (kept as-is, moved under hero) */
   .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -268,11 +279,13 @@
       Scale Your Affiliate Income To <span style="color:var(--accent-light)">₹2L–₹10L/Month</span> Twice As Fast As Everyone Still Chasing Reels.
     </h1>
     <p class="hero-sub fade-up on">
-      A done-with-you Meta Ads system built specifically for affiliate marketers — offer, funnel, and follow-up, engineered to turn cold strangers into paying clients on autopilot.
+      Watch This Full Strategy Video
     </p>
     <div class="fade-up on" style="max-width:640px; margin:0 auto 34px;">
-      <div style="border-radius:14px; overflow:hidden; border:1px solid var(--hairline); background:var(--bg-card);">
-        <wistia-player media-id="z0lafffag8" aspect="1.4328358208955223"></wistia-player>
+      <div id="hero-yt-player" class="hero-yt-wrap" data-video-id="bBRfnsTZ6ME" style="border-radius:14px; overflow:hidden; border:1px solid var(--hairline); background:var(--bg-card); position:relative; aspect-ratio:16/9; cursor:pointer; background-image:url('https://img.youtube.com/vi/bBRfnsTZ6ME/maxresdefault.jpg'); background-size:cover; background-position:center;">
+        <div class="hero-yt-play" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
+        </div>
       </div>
     </div>
     <a href="javascript:void(0)" target="_self" class="btn fade-up on" data-open-modal="true">
@@ -596,6 +609,23 @@
     });
   });
 
+  // ===== HERO VIDEO — CLICK TO PLAY WITH SOUND =====
+  const heroVideoWrap = document.getElementById('hero-yt-player');
+  if (heroVideoWrap) {
+    heroVideoWrap.addEventListener('click', function () {
+      const videoId = this.getAttribute('data-video-id');
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+      iframe.title = 'AdHabits Strategy Video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      this.classList.add('playing');
+      this.style.backgroundImage = 'none';
+      this.innerHTML = '';
+      this.appendChild(iframe);
+    }, { once: true });
+  }
+
   // ===== LEAD FORM MODAL OPEN/CLOSE =====
   const leadModal = document.getElementById('lead-modal');
   document.querySelectorAll('[data-open-modal]').forEach(btn => {
@@ -666,7 +696,7 @@
         fbq('trackSingle', '1609093500184090', 'Lead', { content_category: platform }, { eventID: eventId + '_lead' });
       }
 
-      const WHATSAPP_TO = "919743140915";
+      const WHATSAPP_TO = "919610580359";
       const msg = `Hello Rahman sir,\n\nI am interested in your ad service. My details:\n\n📋 *Platform:* ${platform}\n👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n\nPlease share me details and next steps.`;
       window.open(`https://wa.me/${WHATSAPP_TO}?text=${encodeURIComponent(msg)}`, '_blank');
 
