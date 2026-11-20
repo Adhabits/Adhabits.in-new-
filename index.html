@@ -102,6 +102,12 @@ section{padding:104px 0;position:relative}
 .proofline{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 26px;margin-top:22px;color:var(--dim);font-size:.86rem}
 .proofline span::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--blue2);margin-right:9px;vertical-align:middle}
 
+/* second video (watch section) — change --ar / --mw inline on .v2wrap to switch horizontal / vertical */
+.v2sec{padding-top:30px}
+.v2wrap{position:relative;max-width:var(--mw,820px);margin:46px auto 0}
+.v2wrap::before{content:'';position:absolute;inset:6% 4% -10%;background:radial-gradient(closest-side,rgba(255,255,255,.22),transparent);filter:blur(50px);z-index:-1;animation:breathe 7s ease-in-out infinite}
+.v2wrap .vid{aspect-ratio:var(--ar,16/9)}
+
 /* proof */
 .mq{overflow:hidden;margin-top:56px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
 .track{display:flex;gap:14px;width:max-content;padding:6px 0;animation:rl 60s linear infinite}
@@ -295,6 +301,23 @@ footer{border-top:1px solid var(--line);padding:52px 0 40px;background:rgba(0,0,
 
     <div class="hero-cta rv" style="--d:.2s"><button class="btn lg" data-open-modal="true">Check If You Qualify <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
     <div class="proofline rv" style="--d:.3s"><span>250+ affiliates scaled</span><span>₹50L+ ad spend managed</span><span>3+ years in Meta Ads</span></div>
+  </div>
+</section>
+
+<!-- WATCH — NEW VIDEO -->
+<section class="v2sec" id="watch">
+  <div class="wrap center">
+    <span class="eyebrow rv">Watch this</span>
+    <h2 class="title rv" style="--d:.08s">Before you decide, <span class="serif">watch this.</span></h2>
+    <!-- VIDEO FORMAT: horizontal = --ar:16/9;--mw:820px   |   vertical (Shorts/Reels) = --ar:9/16;--mw:380px -->
+    <div class="v2wrap rv" style="--d:.16s;--ar:16/9;--mw:820px">
+      <div class="vid" id="vid2" data-id="YtvA0Ekju1M" role="button" tabindex="0" aria-label="Play video">
+        <img id="vthumb2" src="https://i.ytimg.com/vi/YtvA0Ekju1M/maxresdefault.jpg" alt="AdHabits video" loading="lazy" referrerpolicy="no-referrer" />
+        <div class="play"></div>
+        <div class="vcap">▶ Tap to play with sound</div>
+      </div>
+    </div>
+    <div class="rv" style="margin-top:40px"><button class="btn lg" data-open-modal="true">Check If You Qualify <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
   </div>
 </section>
 
@@ -546,6 +569,17 @@ const track=$('#track');
   th.onerror=()=>{if(k<chain.length)th.src='https://i.ytimg.com/vi/'+id+'/'+chain[k++]+'.jpg'};
   th.onload=()=>{if(th.naturalWidth&&th.naturalWidth<200&&k<chain.length)th.src='https://i.ytimg.com/vi/'+id+'/'+chain[k++]+'.jpg'};
   const play=()=>{v.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&modestbranding=1&playsinline=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="AdHabits Strategy Video"></iframe>';v.onclick=null;v.style.cursor='default'};
+  v.onclick=play;v.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();play()}};
+})();
+
+/* ================= watch section video (click to play with sound) ================= */
+(function(){
+  const v=$('#vid2');if(!v)return;
+  const id=v.dataset.id,th=$('#vthumb2');
+  const chain=['hqdefault','sddefault','mqdefault'];let k=0;
+  th.onerror=()=>{if(k<chain.length)th.src='https://i.ytimg.com/vi/'+id+'/'+chain[k++]+'.jpg'};
+  th.onload=()=>{if(th.naturalWidth&&th.naturalWidth<200&&k<chain.length)th.src='https://i.ytimg.com/vi/'+id+'/'+chain[k++]+'.jpg'};
+  const play=()=>{v.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0&modestbranding=1&playsinline=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="AdHabits Video"></iframe>';v.onclick=null;v.style.cursor='default'};
   v.onclick=play;v.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();play()}};
 })();
 
